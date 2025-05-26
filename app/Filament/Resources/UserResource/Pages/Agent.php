@@ -32,7 +32,12 @@ class Agent extends Page
         return 'New';
     }
 
-    public ?array $chatHistory = [];
+    public ?array $chatHistory = [
+        [
+            'role' => 'system',
+            'content' => 'Name yourself on every response, for example: \'I, Model [X] created by [Y], sending respond: [response]\''
+        ]
+    ];
     public ?string $message = '';
 
     public function mount(): void
@@ -46,9 +51,6 @@ class Agent extends Page
             ->schema([
                 Section::make('Chat')
                     ->schema([
-                        ViewField::make('chat')
-                            ->view('filament.components.chat-messages')
-                            ->extraAttributes(['class' => 'chat-container']),
                         Textarea::make('message')
                             ->label('Message')
                             ->placeholder('Type your message here...')
@@ -90,6 +92,8 @@ class Agent extends Page
             'timestamp' => now()->toDateTimeString()
         ];
 
+        // @todo Try to implement streaming with wire-stream: https://livewire.laravel.com/docs/wire-stream
+
         $this->reset('message');
     }
 
@@ -110,11 +114,6 @@ class Agent extends Page
 
     public function getSystemMessages(): array
     {
-        return [
-            [
-                'role' => 'system',
-                'content' => 'Name yourself on every response, for example: \'I, Model [X] created by [Y], sending respond: [response]\''
-            ]
-        ];
+        return array_filter($this->chatHistory, fn($message) => !in_array($message['role'], ['user', 'assistant']));
     }
 }

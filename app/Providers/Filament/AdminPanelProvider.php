@@ -19,6 +19,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Illuminate\Support\Facades\Vite;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -41,6 +42,10 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
+            ])
+            ->assets([
+                \Filament\Support\Assets\Css::make('app', Vite::asset('resources/css/app.css')),
+                \Filament\Support\Assets\Js::make('app', Vite::asset('resources/js/app.js')),
             ])
             ->middleware([
                 EncryptCookies::class,
