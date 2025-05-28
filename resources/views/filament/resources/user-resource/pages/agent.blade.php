@@ -41,7 +41,13 @@
                                 @foreach($this->getSystemMessages() as $message)
                                     <div class="text-xs text-gray-600 mb-2">
                                         <strong class="font-mono uppercase text-gray-500">{{ $message['role'] }}:</strong>
-                                        <p class="mt-1 font-sans">{{ $message['content'] }}</p>
+                                        <p class="mt-1 font-sans">
+                                            @if(isset($message['content']))
+                                                {{ $message['content'] }}
+                                            @else
+                                                {{ json_encode($message, JSON_PRETTY_PRINT) }}
+                                            @endif
+                                        </p>
                                     </div>
                                 @endforeach
                             </div>
