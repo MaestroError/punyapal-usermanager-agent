@@ -10,6 +10,8 @@ use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
+use App\AiAgents\UserManager;
+use LarAgent\Agent as AgentClass;
 
 class Agent extends Page
 {
@@ -43,6 +45,7 @@ class Agent extends Page
     public function mount(): void
     {
         $this->form->fill();
+        $this->setChatHistoryFromAgent();
     }
 
     public function form(Form $form): Form
@@ -80,17 +83,9 @@ class Agent extends Page
         $this->validateOnly('message');
         
         // Add user message to chat history
-        $this->chatHistory[] = [
-            'role' => 'user',
-            'content' => $this->message
-        ];
+        $this->getAgentInstace()->respond($this->message);
 
-        // Simulate assistant response
-        $this->chatHistory[] = [
-            'role' => 'assistant',
-            'content' => 'Hello, ' . auth()->user()->name . '!',
-            'timestamp' => now()->toDateTimeString()
-        ];
+        $this->setChatHistoryFromAgent();
 
         // @todo Try to implement streaming with wire-stream: https://livewire.laravel.com/docs/wire-stream
 
@@ -101,6 +96,10 @@ class Agent extends Page
     {
         $this->chatHistory = [];
         
+        $this->getAgentInstace()->clear();
+
+        $this->setChatHistoryFromAgent();
+
         Notification::make()
             ->title('Chat history cleared')
             ->success()
@@ -115,5 +114,13 @@ class Agent extends Page
     public function getSystemMessages(): array
     {
         return array_filter($this->chatHistory, fn($message) => !in_array($message['role'], ['user', 'assistant']));
+    }
+
+    protected function setChatHistoryFromAgent(): void {
+        $this->chatHistory = $this->getAgentInstace()->chatHistory()->toArray();
+    }
+
+    protected function getAgentInstace(): AgentClass {
+        return UserManager::forUser(auth()->user());
     }
 }
