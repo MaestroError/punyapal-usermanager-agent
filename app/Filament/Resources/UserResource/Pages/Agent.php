@@ -92,8 +92,6 @@ class Agent extends Page
             'timestamp' => now()->toDateTimeString()
         ];
 
-        // @todo Try to implement streaming with wire-stream: https://livewire.laravel.com/docs/wire-stream
-
         $this->reset('message');
     }
 
