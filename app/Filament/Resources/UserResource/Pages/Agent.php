@@ -10,6 +10,7 @@ use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
+use App\AiAgents\UserManager;
 
 class Agent extends Page
 {
@@ -43,6 +44,7 @@ class Agent extends Page
     public function mount(): void
     {
         $this->form->fill();
+        $this->setHistoryFromAgent();
     }
 
     public function form(Form $form): Form
@@ -80,24 +82,18 @@ class Agent extends Page
         $this->validateOnly('message');
         
         // Add user message to chat history
-        $this->chatHistory[] = [
-            'role' => 'user',
-            'content' => $this->message
-        ];
+        $response = $this->getAgentInstance()->respond($this->message);
 
-        // Simulate assistant response
-        $this->chatHistory[] = [
-            'role' => 'assistant',
-            'content' => 'Hello, ' . auth()->user()->name . '!',
-            'timestamp' => now()->toDateTimeString()
-        ];
+        $this->setHistoryFromAgent();
 
         $this->reset('message');
     }
 
     public function clearHistory(): void
     {
-        $this->chatHistory = [];
+        $this->getAgentInstance()->clear();
+
+        $this->setHistoryFromAgent();
         
         Notification::make()
             ->title('Chat history cleared')
@@ -113,5 +109,15 @@ class Agent extends Page
     public function getSystemMessages(): array
     {
         return array_filter($this->chatHistory, fn($message) => !in_array($message['role'], ['user', 'assistant']));
+    }
+
+    protected function getAgentInstance(): UserManager
+    {
+        return UserManager::forUser(auth()->user());
+    }
+
+    protected function setHistoryFromAgent(): void
+    {
+        $this->chatHistory = $this->getAgentInstance()->chatHistory()->toArray();
     }
 }

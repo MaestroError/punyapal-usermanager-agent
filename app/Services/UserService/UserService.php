@@ -50,7 +50,7 @@ class UserService implements UserServiceInterface
         if (!$user) {
             return false;
         }
-
+        
         return $user->update(['is_active' => true]);
     }
 
