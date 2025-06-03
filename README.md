@@ -1,6 +1,6 @@
 # Laravel User Manager Agent
 
-![User Manager Example](UserManager-example.png)
+![User Manager Example](screenshots/subscription-sample.png)
 
 A Laravel-based user management system with AI agent capabilities.
 

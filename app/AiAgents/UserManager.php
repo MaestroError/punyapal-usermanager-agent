@@ -6,6 +6,7 @@ use LarAgent\Agent;
 use LarAgent\Attributes\Tool;
 use App\Services\UserService\UserService;
 use App\Enums\SubscriptionType;
+use Illuminate\Support\Str;
 
 class UserManager extends Agent
 {
@@ -93,11 +94,14 @@ class UserManager extends Agent
     }
 
     #[Tool("Reset a user's password", [
-        'identifier' => 'User ID or email of the account',
-        'newPassword' => 'New password to set for the user'
+        'identifier' => 'User ID or email of the account'
     ])]
-    public function resetPassword(string $identifier, string $newPassword): bool
+    public function resetPassword(string $identifier): string
     {
-        return $this->userService->resetPassword($identifier, $newPassword);
+        $newPassword = Str::random(12);
+        $this->userService->resetPassword($identifier, $newPassword);
+        return "Password reset successfully. 
+            Recommend user to change password after the first login. 
+            New password: $newPassword";
     }
 }

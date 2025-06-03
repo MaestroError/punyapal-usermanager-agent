@@ -15,8 +15,10 @@
                                 <div class="flex {{ $message['role'] === 'assistant' ? 'justify-start' : 'justify-end' }}">
                                     <div class="max-w-3/4 rounded-lg px-4 py-2 {!! $message['role'] === 'assistant' ? 'bg-gray-100 text-gray-800' : 'bg-blue-500 text-white' !!}">
                                         <div class="text-sm">
-                                            @if($message['role'] === 'assistant')
+                                            @if($message['role'] === 'assistant' && !isset($message['tool_calls']))
                                                 <span class="font-medium">Assistant</span>
+                                            @elseif($message['role'] === 'assistant' && isset($message['tool_calls']))
+                                                <span class="font-medium">Assistant (Tool Call)</span>
                                             @else
                                                 <span class="font-medium">You</span>
                                             @endif
