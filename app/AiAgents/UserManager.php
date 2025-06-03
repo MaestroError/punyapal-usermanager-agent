@@ -66,4 +66,38 @@ class UserManager extends Agent
     {
         return $this->userService->changeSubscription($identifier, $subscriptionType);
     }
+
+    #[Tool("Search for users by name or email", [
+        'query' => 'Search term to look for in name or email',
+        'perPage' => 'Number of results per page (default: 15)'
+    ])]
+    public function searchUsers(string $query, int $perPage = 15)
+    {
+        return $this->userService->searchUsers($query, $perPage);
+    }
+
+    #[Tool("Activate a user account", [
+        'identifier' => 'User ID or email of the account to activate'
+    ])]
+    public function activateUser(string $identifier): bool
+    {
+        return $this->userService->activateUser($identifier);
+    }
+
+    #[Tool("Deactivate a user account", [
+        'identifier' => 'User ID or email of the account to deactivate'
+    ])]
+    public function deactivateUser(string $identifier): bool
+    {
+        return $this->userService->deactivateUser($identifier);
+    }
+
+    #[Tool("Reset a user's password", [
+        'identifier' => 'User ID or email of the account',
+        'newPassword' => 'New password to set for the user'
+    ])]
+    public function resetPassword(string $identifier, string $newPassword): bool
+    {
+        return $this->userService->resetPassword($identifier, $newPassword);
+    }
 }
