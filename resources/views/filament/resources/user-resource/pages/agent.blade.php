@@ -28,7 +28,7 @@
                                                 </span>
                                             @endif
                                         </div>
-                                        <p class="mt-1">{{ $message['content'] }}</p>
+                                        <p class="mt-1">{{ $message['content'][0]['text'] ?? $message['content'] }}</p>
                                     </div>
                                 </div>
                             @endforeach
